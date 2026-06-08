@@ -192,6 +192,17 @@
   border-radius: var(--radius-full);
   box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4);
   animation: pulse 0.5s ease-in-out infinite;
+  min-width: 90px;
+  text-align: center;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.comboBadgeHidden {
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
+  animation: none;
 }
 
 .comboText {

@@ -39,6 +39,8 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
   const nextNoteIndexRef = useRef(0)
   const gamePhaseRef = useRef(gamePhase)
   const countIntervalRef = useRef<number | null>(null)
+  const scoreRef = useRef(0)
+  const comboRef = useRef(0)
 
   const startCountdownRef = useRef<() => void>(() => {})
   const startPlayingRef = useRef<() => void>(() => {})
@@ -101,8 +103,12 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
       }
     })
 
+    if (totalScore === 0 && scoreRef.current > 0) {
+      totalScore = scoreRef.current
+    }
+
     const maxPossibleScore = finalNotes.length * JUDGMENT_SCORES.perfect
-    const accuracy = Math.round((totalScore / maxPossibleScore) * 100)
+    const accuracy = Math.max(0, Math.min(100, Math.round((totalScore / maxPossibleScore) * 100)))
 
     const result: GameResult = {
       score: totalScore,
@@ -125,6 +131,8 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
   const startPlaying = useCallback(() => {
     notesRef.current = pattern.notes.map((n) => ({ ...n }))
     nextNoteIndexRef.current = 0
+    scoreRef.current = 0
+    comboRef.current = 0
     setNotes(pattern.notes.map((n) => ({ ...n })))
     setCurrentTime(0)
     setScore(0)
@@ -150,6 +158,9 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
       setCurrentTime(Math.max(0, Math.min(totalDuration, elapsed)))
 
       const currentNotes = notesRef.current
+      let notesChanged = false
+      let hadMiss = false
+
       while (
         nextNoteIndexRef.current < currentNotes.length &&
         currentNotes[nextNoteIndexRef.current].time < elapsed - JUDGMENT_THRESHOLDS.good
@@ -158,11 +169,19 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
         if (!note.hit) {
           note.hit = false
           note.judgment = 'miss'
-          setNotes([...currentNotes])
           setJudgments((prev) => [...prev, { index: nextNoteIndexRef.current, type: 'miss' }])
-          setCombo(0)
+          notesChanged = true
+          hadMiss = true
         }
         nextNoteIndexRef.current++
+      }
+
+      if (notesChanged) {
+        setNotes([...currentNotes])
+      }
+      if (hadMiss) {
+        comboRef.current = 0
+        setCombo(0)
       }
 
       animationRef.current = requestAnimationFrame(animate)
@@ -246,45 +265,63 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
     }
 
     const currentNotes = notesRef.current
-    const currentIndex = nextNoteIndexRef.current
+    const startIndex = nextNoteIndexRef.current
 
-    if (currentIndex >= currentNotes.length) return
+    if (startIndex >= currentNotes.length) return
 
-    const note = currentNotes[currentIndex]
-    if (note.hit) return
+    const firstNote = currentNotes[startIndex]
+    if (firstNote.hit) return
 
-    const diff = elapsed - note.time
+    const diff = elapsed - firstNote.time
     const absDiff = Math.abs(diff)
 
     if (absDiff <= JUDGMENT_THRESHOLDS.good) {
-      let judgment: JudgmentType
+      let endIndex = startIndex
+      while (
+        endIndex + 1 < currentNotes.length &&
+        Math.abs(currentNotes[endIndex + 1].time - firstNote.time) < 0.03
+      ) {
+        endIndex++
+      }
 
+      let judgment: JudgmentType
       if (absDiff <= JUDGMENT_THRESHOLDS.perfect) {
         judgment = 'perfect'
       } else {
         judgment = 'good'
       }
 
-      note.hit = true
-      note.judgment = judgment
-      note.userTime = elapsed
+      let hitCount = 0
+      for (let i = startIndex; i <= endIndex; i++) {
+        const note = currentNotes[i]
+        note.hit = true
+        note.judgment = judgment
+        note.userTime = elapsed
+        hitCount++
+      }
 
       setNotes([...currentNotes])
-      setJudgments((prev) => [...prev, { index: currentIndex, type: judgment }])
+      setJudgments((prev) => [...prev, { index: startIndex, type: judgment }])
 
-      const points = judgment === 'perfect' ? JUDGMENT_SCORES.perfect : JUDGMENT_SCORES.good
-      setScore((prev) => prev + points)
+      const basePoints = judgment === 'perfect' ? JUDGMENT_SCORES.perfect : JUDGMENT_SCORES.good
+      const points = basePoints * hitCount
+      scoreRef.current += points
+      setScore(scoreRef.current)
 
-      setCombo((prev) => prev + 1)
+      comboRef.current += 1
+      setCombo(comboRef.current)
 
-      nextNoteIndexRef.current = currentIndex + 1
+      nextNoteIndexRef.current = endIndex + 1
     } else if (diff > JUDGMENT_THRESHOLDS.good) {
-      note.hit = false
-      note.judgment = 'miss'
+      firstNote.hit = false
+      firstNote.judgment = 'miss'
       setNotes([...currentNotes])
-      setJudgments((prev) => [...prev, { index: currentIndex, type: 'miss' }])
+      setJudgments((prev) => [...prev, { index: startIndex, type: 'miss' }])
+
+      comboRef.current = 0
       setCombo(0)
-      nextNoteIndexRef.current = currentIndex + 1
+
+      nextNoteIndexRef.current = startIndex + 1
     }
   }, [])
 
@@ -349,11 +386,9 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
           <span className={styles.scoreIcon}>⭐</span>
           <span className={styles.scoreText}>{score}分</span>
         </div>
-        {combo > 1 && (
-          <div className={styles.comboBadge}>
-            <span className={styles.comboText}>{combo} 连击!</span>
-          </div>
-        )}
+        <div className={`${styles.comboBadge} ${combo > 1 ? '' : styles.comboBadgeHidden}`}>
+          <span className={styles.comboText}>{combo} 连击!</span>
+        </div>
 
         <HelpTip title="游戏说明" tips={helpTips} position="bottom" />
       </div>
