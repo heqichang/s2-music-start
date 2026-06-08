@@ -51,9 +51,12 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
   const totalDuration = pattern.measures * pattern.beatsPerMeasure * (60 / pattern.bpm)
   const totalBeats = pattern.measures * pattern.beatsPerMeasure
 
-  const currentBeat = Math.min(
-    totalBeats,
-    Math.floor(currentTime / (60 / pattern.bpm)) + 1
+  const currentBeat = Math.max(
+    0,
+    Math.min(
+      totalBeats,
+      Math.floor(currentTime / (60 / pattern.bpm)) + 1
+    )
   )
 
   useEffect(() => {
@@ -129,25 +132,35 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
   }, [finishGame])
 
   const startPlaying = useCallback(() => {
+    const prepTime = 2
+
     notesRef.current = pattern.notes.map((n) => ({ ...n }))
     nextNoteIndexRef.current = 0
     scoreRef.current = 0
     comboRef.current = 0
     setNotes(pattern.notes.map((n) => ({ ...n })))
-    setCurrentTime(0)
+    setCurrentTime(-prepTime)
     setScore(0)
     setCombo(0)
     setJudgments([])
     setGamePhase('playing')
+    gamePhaseRef.current = 'playing'
 
-    const audioStartTime = audioEngine.getCurrentTime()
+    const audioStartTime = audioEngine.getCurrentTime() + prepTime
     startTimeRef.current = audioStartTime
+    console.log('🎮 startPlaying:', {
+      audioStartTime,
+      prepTime,
+      firstNoteTime: pattern.notes[0]?.time,
+      totalNotes: pattern.notes.length,
+      totalDuration,
+    })
 
     const animate = () => {
       if (gamePhaseRef.current !== 'playing') return
 
       const now = audioEngine.getCurrentTime()
-      const elapsed = now - audioStartTime
+      const elapsed = now - startTimeRef.current
 
       if (elapsed >= totalDuration + 1) {
         setCurrentTime(totalDuration)
@@ -155,7 +168,7 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
         return
       }
 
-      setCurrentTime(Math.max(0, Math.min(totalDuration, elapsed)))
+      setCurrentTime(Math.min(totalDuration, elapsed))
 
       const currentNotes = notesRef.current
       let notesChanged = false
@@ -196,6 +209,7 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
 
   const startCountdown = useCallback(() => {
     setGamePhase('countdown')
+    gamePhaseRef.current = 'countdown'
     setCountdown(3)
 
     let count = 3
@@ -221,6 +235,7 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
     nextNoteIndexRef.current = 0
     setCurrentTime(0)
     setGamePhase('demo')
+    gamePhaseRef.current = 'demo'
 
     const startDelay = playPattern()
     const audioStartTime = audioEngine.getCurrentTime() + startDelay
@@ -267,6 +282,16 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
     const currentNotes = notesRef.current
     const startIndex = nextNoteIndexRef.current
 
+    console.log('👆 handleTap:', {
+      now,
+      startTime: startTimeRef.current,
+      elapsed,
+      startIndex,
+      currentNoteTime: currentNotes[startIndex]?.time,
+      currentNoteDrum: currentNotes[startIndex]?.drum,
+      notesLength: currentNotes.length,
+    })
+
     if (startIndex >= currentNotes.length) return
 
     const firstNote = currentNotes[startIndex]
@@ -274,6 +299,8 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
 
     const diff = elapsed - firstNote.time
     const absDiff = Math.abs(diff)
+
+    console.log('   diff:', diff, 'absDiff:', absDiff, 'goodThreshold:', JUDGMENT_THRESHOLDS.good)
 
     if (absDiff <= JUDGMENT_THRESHOLDS.good) {
       let endIndex = startIndex
@@ -341,10 +368,27 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
     const initAudio = async () => {
       try {
         await audioEngine.init()
+        console.log('🎵 Audio initialized, state:', audioEngine.getState(), 'currentTime:', audioEngine.getCurrentTime())
         setTimeout(() => startDemoRef.current(), 500)
       } catch (e) {
         console.error('Audio init error:', e)
       }
+    }
+
+    ;(window as any).__rhythmDebug = {
+      getState: () => ({
+        gamePhase: gamePhaseRef.current,
+        startTime: startTimeRef.current,
+        nextNoteIndex: nextNoteIndexRef.current,
+        score: scoreRef.current,
+        combo: comboRef.current,
+        audioState: audioEngine.getState(),
+        audioTime: audioEngine.getCurrentTime(),
+        notes: notesRef.current,
+      }),
+      resumeAudio: () => audioEngine.resume(),
+      startDemo: () => startDemoRef.current(),
+      startPlaying: () => startPlayingRef.current(),
     }
 
     initAudio()

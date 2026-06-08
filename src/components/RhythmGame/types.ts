@@ -78,8 +78,8 @@ export const DIFFICULTIES: DifficultyConfig[] = [
 ]
 
 export const JUDGMENT_THRESHOLDS = {
-  perfect: 0.06,
-  good: 0.13,
+  perfect: 0.1,
+  good: 0.2,
 }
 
 export const JUDGMENT_SCORES = {

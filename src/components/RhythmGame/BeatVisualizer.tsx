@@ -108,7 +108,7 @@ const BeatVisualizer = ({
       <div className={styles.progressBar}>
         <div
           className={styles.progressFill}
-          style={{ width: `${Math.min(100, (currentTime / totalDuration) * 100)}%` }}
+          style={{ width: `${Math.max(0, Math.min(100, (currentTime / totalDuration) * 100))}%` }}
         />
       </div>
     </div>
