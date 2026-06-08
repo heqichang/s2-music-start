@@ -1,0 +1,334 @@
+.keyboardContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: var(--spacing-lg) 0;
+}
+
+.pianoKeyboard {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  height: 260px;
+  background: linear-gradient(180deg, #2d1f3d 0%, #1a1025 100%);
+  border-radius: 12px 12px 16px 16px;
+  padding: 20px 15px 15px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.whiteKeysRow {
+  display: flex;
+  height: 100%;
+  gap: 3px;
+}
+
+.whiteKey {
+  flex: 1;
+  height: 100%;
+  background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 85%, #e0e0e0 100%);
+  border-radius: 0 0 8px 8px;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15), inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.08s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.whiteKey:hover {
+  background: linear-gradient(180deg, #f8f8ff 0%, #e8e8f0 85%, #d8d8e8 100%);
+}
+
+.whiteKey.pressed {
+  background: linear-gradient(180deg, #e0d8f0 0%, #c8b8e8 85%, #b0a0d8 100%);
+  transform: translateY(3px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(124, 58, 237, 0.2);
+}
+
+.blackKeysRow {
+  position: absolute;
+  top: 20px;
+  left: 15px;
+  right: 15px;
+  height: 60%;
+  pointer-events: none;
+}
+
+.blackKey {
+  position: absolute;
+  width: 6%;
+  height: 100%;
+  background: linear-gradient(180deg, #4a3a5c 0%, #2d1f3d 50%, #1a1025 100%);
+  border-radius: 0 0 6px 6px;
+  cursor: pointer;
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), inset 0 -2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  transition: all 0.08s ease;
+  z-index: 10;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.blackKey:hover {
+  background: linear-gradient(180deg, #5a4a6c 0%, #3d2f4d 50%, #2a2035 100%);
+}
+
+.blackKey.pressed {
+  background: linear-gradient(180deg, #6b529c 0%, #5a4288 50%, #4a3574 100%);
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 2px 4px rgba(167, 139, 250, 0.3);
+}
+
+.keyLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: none;
+}
+
+.whiteKey .keyboardKey {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-primary);
+  background: rgba(124, 58, 237, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  min-width: 24px;
+  text-align: center;
+}
+
+.whiteKey .noteName {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.blackKey .keyboardKey {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-primary-light);
+  background: rgba(167, 139, 250, 0.2);
+  padding: 2px 6px;
+  border-radius: 3px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.blackKey .noteName {
+  font-size: 8px;
+  color: var(--color-text-light);
+  font-weight: 500;
+}
+
+.controlsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xl);
+  justify-content: center;
+  padding: var(--spacing-xl);
+  background: var(--color-card-bg);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  margin-bottom: var(--spacing-xl);
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+  min-width: 200px;
+}
+
+.controlTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.instrumentButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  justify-content: center;
+}
+
+.instrumentButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--color-bg-primary);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.instrumentButton:hover {
+  background: var(--color-primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.instrumentButton.activeInstrument {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-pink) 100%);
+  border-color: var(--color-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+}
+
+.instrumentIcon {
+  font-size: 28px;
+}
+
+.instrumentLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.velocityButtons {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.velocityButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-bg-primary);
+  border: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  min-width: 70px;
+}
+
+.velocityButton:hover {
+  background: var(--color-primary-light);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.velocityButton.activeVelocity {
+  background: linear-gradient(135deg, var(--color-accent-orange) 0%, var(--color-accent-pink) 100%);
+  border-color: var(--color-accent-orange);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(249, 115, 22, 0.4);
+}
+
+.velocityLabel {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  font-style: italic;
+}
+
+.velocityDesc {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.toggleButton {
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--color-bg-primary);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.toggleButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.toggleButton.toggleActive {
+  background: linear-gradient(135deg, var(--color-accent-green) 0%, var(--color-primary) 100%);
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+@media (max-width: 768px) {
+  .pianoKeyboard {
+    height: 200px;
+  }
+
+  .keyLabel {
+    gap: 2px;
+  }
+
+  .whiteKey .keyboardKey {
+    font-size: 10px;
+    padding: 2px 4px;
+    min-width: 18px;
+  }
+
+  .whiteKey .noteName {
+    font-size: 8px;
+  }
+
+  .blackKey .keyboardKey {
+    font-size: 8px;
+    padding: 1px 4px;
+  }
+
+  .controlsContainer {
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+  }
+
+  .controlGroup {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .instrumentButtons {
+    width: 100%;
+  }
+
+  .instrumentButton {
+    padding: var(--spacing-sm) var(--spacing-md);
+    flex: 1;
+    min-width: 70px;
+  }
+
+  .instrumentIcon {
+    font-size: 24px;
+  }
+
+  .instrumentLabel {
+    font-size: var(--font-size-xs);
+  }
+}
+
+@media (max-width: 480px) {
+  .pianoKeyboard {
+    height: 160px;
+  }
+
+  .whiteKey .keyboardKey,
+  .whiteKey .noteName,
+  .blackKey .keyboardKey,
+  .blackKey .noteName {
+    display: none;
+  }
+}

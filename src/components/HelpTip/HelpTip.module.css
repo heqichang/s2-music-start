@@ -1,0 +1,181 @@
+.helpTipWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.helpButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent-purple) 100%);
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+  cursor: pointer;
+  border: 2px solid white;
+}
+
+.helpButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+}
+
+.helpButton:active {
+  transform: scale(0.95);
+}
+
+.helpIcon {
+  line-height: 1;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1000;
+  min-width: 280px;
+  max-width: 360px;
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  padding: var(--spacing-lg);
+  animation: tooltipFadeIn 0.2s ease;
+}
+
+.tooltip.bottom {
+  top: calc(100% + 12px);
+  right: 0;
+}
+
+.tooltip.top {
+  bottom: calc(100% + 12px);
+  right: 0;
+}
+
+.tooltip.left {
+  right: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip.right {
+  left: calc(100% + 12px);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip::before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+}
+
+.tooltip.bottom::before {
+  top: -8px;
+  right: 14px;
+  border-width: 0 8px 8px 8px;
+  border-color: transparent transparent white transparent;
+}
+
+.tooltip.top::before {
+  bottom: -8px;
+  right: 14px;
+  border-width: 8px 8px 0 8px;
+  border-color: white transparent transparent transparent;
+}
+
+.tooltipHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+  padding-bottom: var(--spacing-sm);
+  border-bottom: 2px solid var(--color-bg-primary);
+}
+
+.tooltipTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.closeButton {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  background: var(--color-accent-pink);
+  color: white;
+}
+
+.tipsList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tipItem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-xs) 0;
+}
+
+.tipBullet {
+  color: var(--color-primary);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tipText {
+  font-size: var(--font-size-base);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+@keyframes tooltipFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .helpButton {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .tooltip {
+    min-width: 240px;
+    max-width: 280px;
+    padding: var(--spacing-md);
+  }
+
+  .tipText {
+    font-size: var(--font-size-sm);
+  }
+}

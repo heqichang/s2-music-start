@@ -1,0 +1,15 @@
+.gameContainer {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+  min-height: calc(100vh - var(--nav-height));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .gameContainer {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+}

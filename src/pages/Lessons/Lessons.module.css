@@ -1,0 +1,90 @@
+.lessons {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.pageTitle {
+  font-size: 36px;
+  color: white;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.pageDesc {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 40px;
+}
+
+.lessonGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.lessonCard {
+  background: white;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.lessonCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.lessonIcon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.lessonTitle {
+  font-size: 20px;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.lessonMeta {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.level {
+  padding: 4px 12px;
+  background: #e8f4fd;
+  color: #1890ff;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.duration {
+  padding: 4px 12px;
+  background: #f6ffed;
+  color: #52c41a;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.startButton {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: opacity 0.2s;
+}
+
+.startButton:hover {
+  opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+  .lessonGrid {
+    grid-template-columns: 1fr;
+  }
+}

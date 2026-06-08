@@ -1,0 +1,5 @@
+export { default as GameBoard } from './GameBoard'
+export { default as ResultScreen } from './ResultScreen'
+export { default as InstrumentGallery } from './InstrumentGallery'
+export * from './types'
+export * from './instruments'

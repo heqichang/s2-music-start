@@ -1,0 +1,70 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: #667eea;
+}
+
+.nav {
+  display: flex;
+  gap: 32px;
+}
+
+.navLink {
+  font-size: 16px;
+  color: #333;
+  transition: color 0.2s;
+  padding: 8px 0;
+  position: relative;
+}
+
+.navLink:hover {
+  color: #667eea;
+}
+
+.active {
+  font-size: 16px;
+  color: #667eea;
+  font-weight: 600;
+  padding: 8px 0;
+  position: relative;
+}
+
+.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #667eea;
+  border-radius: 1px;
+}
+
+.main {
+  flex: 1;
+  padding: 40px;
+}
+
+.footer {
+  padding: 20px 40px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
