@@ -273,12 +273,6 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
     const now = audioEngine.getCurrentTime()
     const elapsed = now - startTimeRef.current
 
-    try {
-      audioEngine.playDrum('kick', 'f')
-    } catch (e) {
-      console.error('Play tap sound error:', e)
-    }
-
     const currentNotes = notesRef.current
     const startIndex = nextNoteIndexRef.current
 
@@ -325,6 +319,12 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
         note.judgment = judgment
         note.userTime = elapsed
         hitCount++
+
+        try {
+          audioEngine.playDrum(note.drum, 'f')
+        } catch (e) {
+          console.error('Play drum sound error:', e)
+        }
       }
 
       setNotes([...currentNotes])
