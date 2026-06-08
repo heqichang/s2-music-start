@@ -96,6 +96,7 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
         goodCount++
         totalScore += JUDGMENT_SCORES.good
       } else {
+        note.judgment = 'miss'
         missCount++
       }
     })
@@ -151,7 +152,7 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
       const currentNotes = notesRef.current
       while (
         nextNoteIndexRef.current < currentNotes.length &&
-        currentNotes[nextNoteIndexRef.current].time < elapsed - 0.15
+        currentNotes[nextNoteIndexRef.current].time < elapsed - JUDGMENT_THRESHOLDS.good
       ) {
         const note = currentNotes[nextNoteIndexRef.current]
         if (!note.hit) {
@@ -245,31 +246,20 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
     }
 
     const currentNotes = notesRef.current
-    let closestNoteIndex = -1
-    let closestDiff = Infinity
+    const currentIndex = nextNoteIndexRef.current
 
-    for (let i = nextNoteIndexRef.current; i < currentNotes.length; i++) {
-      const note = currentNotes[i]
-      if (note.hit) continue
+    if (currentIndex >= currentNotes.length) return
 
-      const diff = elapsed - note.time
-      const absDiff = Math.abs(diff)
+    const note = currentNotes[currentIndex]
+    if (note.hit) return
 
-      if (absDiff < closestDiff && absDiff < JUDGMENT_THRESHOLDS.good) {
-        closestDiff = absDiff
-        closestNoteIndex = i
-      }
+    const diff = elapsed - note.time
+    const absDiff = Math.abs(diff)
 
-      if (diff > JUDGMENT_THRESHOLDS.good) {
-        break
-      }
-    }
-
-    if (closestNoteIndex >= 0) {
-      const note = currentNotes[closestNoteIndex]
+    if (absDiff <= JUDGMENT_THRESHOLDS.good) {
       let judgment: JudgmentType
 
-      if (closestDiff <= JUDGMENT_THRESHOLDS.perfect) {
+      if (absDiff <= JUDGMENT_THRESHOLDS.perfect) {
         judgment = 'perfect'
       } else {
         judgment = 'good'
@@ -280,16 +270,21 @@ const GameBoard = ({ pattern, difficulty, onComplete, onBackToSelect }: GameBoar
       note.userTime = elapsed
 
       setNotes([...currentNotes])
-      setJudgments((prev) => [...prev, { index: closestNoteIndex, type: judgment }])
+      setJudgments((prev) => [...prev, { index: currentIndex, type: judgment }])
 
       const points = judgment === 'perfect' ? JUDGMENT_SCORES.perfect : JUDGMENT_SCORES.good
       setScore((prev) => prev + points)
 
       setCombo((prev) => prev + 1)
 
-      if (closestNoteIndex >= nextNoteIndexRef.current) {
-        nextNoteIndexRef.current = closestNoteIndex + 1
-      }
+      nextNoteIndexRef.current = currentIndex + 1
+    } else if (diff > JUDGMENT_THRESHOLDS.good) {
+      note.hit = false
+      note.judgment = 'miss'
+      setNotes([...currentNotes])
+      setJudgments((prev) => [...prev, { index: currentIndex, type: 'miss' }])
+      setCombo(0)
+      nextNoteIndexRef.current = currentIndex + 1
     }
   }, [])
 

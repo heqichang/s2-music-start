@@ -143,6 +143,7 @@
   align-items: center;
   gap: var(--spacing-md);
   margin-bottom: var(--spacing-lg);
+  min-height: 48px;
 }
 
 .backButton {
